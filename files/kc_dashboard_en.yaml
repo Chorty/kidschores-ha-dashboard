@@ -261,6 +261,8 @@ sections:
 
                 {%- set ns.WEEKLY = "Weekly" -%}        
 
+                {%- set ns.DESCRIPTION = "Description" -%}
+
                 {#-- ************* End Translatable Text ************* --#}
 
                 {#-- ************* Set Preferences ************* --#} 
@@ -434,6 +436,7 @@ sections:
                           ns.NO_DUE_DATE if not due_date else 
                           (due_date.strftime('%-I:%M %p') if due_date.date() == today else as_timestamp(due_date) | timestamp_custom('%a %b %-d', true)) 
                       -%}
+                      {%- set chore_desc = state_attr(chore_sensor_id, 'description') -%}
 
                           
                       {%- set multi_approve = state_attr(chore_sensor_id, 'allow_multiple_claims_per_day') -%}
@@ -450,7 +453,7 @@ sections:
                       {%- set multi_approve = state_attr(chore_sensor_id, 'allow_multiple_claims_per_day') -%}
                       {%- set streak = state_attr(chore_sensor_id, 'chore_current_streak') | string -%}              
                       {%- set secondary_options = 'Points: ' + points + '\n' + 'Streak: ' + streak + '\n' + 'Last: ' + last_update  + '\n \n' + 'Status: ' + chore_state + '\n' + 'Due: ' + due_date_short -%}
-                      {%- set secondary = ns.points_label ~ ': ' + points + '\n' + ns.STREAK + ': ' + streak + '\n \n' + ns.STATUS + ': ' + chore_state_display + '\n' + ns.DUE + ': ' + due_date_short -%}
+                      {%- set secondary = ns.points_label ~ ': ' ~ points ~ '\n' ~ ns.STREAK ~ ': ' ~ streak ~ '\n \n' ~ ns.STATUS ~ ': ' ~ chore_state_display ~ '\n' ~ ns.DUE ~ ': ' ~ due_date_short ~ ('\n' ~ ns.DESCRIPTION ~ ': ' ~ chore_desc if chore_desc and chore_desc not in ['None', 'unknown', 'unavailable'] else '') -%}
                       {%- set icon_color = (
                             'blue' if chore_state == 'approved' and multi_approve == true else
                             'green' if chore_state == 'approved' else
